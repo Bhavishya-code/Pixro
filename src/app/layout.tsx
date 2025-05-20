@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
-
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from '@clerk/nextjs'
 import { ThemeProvider } from "@/providers/theme-provider"
 
 import "./globals.css";
@@ -20,6 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+     <ClerkProvider>
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${manrope.variable}  antialiased`}
@@ -34,5 +42,6 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
+    </ClerkProvider>
   );
 }
