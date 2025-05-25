@@ -1,6 +1,3 @@
-
-// This is your improved Prisma schema file
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,6 +5,104 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String     @db.VarChar(100)
+  clerkId          String     @unique
+  email            String     @unique
+  profileImage     String
+  stripeConnectId  String?    @db.VarChar(255)
+  lastLoginAt      DateTime?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  deletedAt        DateTime?
+  subscription     Boolean    @default(false)
+  stripeCustomerId String?    @db.VarChar(255)
+  webinars         Webinar[]  @relation("PresenterWebinars")
+  aiAgents         AiAgents[] @relation("AiAgentsToUser")
+
+  @@index([email])
+  @@index([clerkId])
+}
+
+model Webinar {
+  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title           String            @db.VarChar(255)
+  description     String?
+  startTime       DateTime
+  endTime         DateTime?
+  duration        Int               @default(0)
+  webinarStatus   WebinarStatusEnum @default(SCHEDULED)
+  presenterId     String            @db.Uuid
+  tags            String[]
+  ctaLabel        String?           @db.VarChar(50)
+  ctaType         CtaTypeEnum
+  ctaUrl          String?           @db.VarChar(255)
+  couponCode      String?           @db.VarChar(50)
+  couponEnabled   Boolean           @default(false)
+  couponExpiry    DateTime?
+  lockChat        Boolean           @default(false)
+  stripeProductId String?           @db.VarChar(255)
+  aiAgentId       String?           @db.Uuid
+  priceId         String?           @db.VarChar(255)
+  recordingUrl    String?
+  thumbnail       String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  deletedAt       DateTime?
+  attendeeId      String?           @db.Uuid
+  attendances     Attendance[]
+  Attendee        Attendee?         @relation(fields: [attendeeId], references: [id])
+  presenter       User              @relation("PresenterWebinars", fields: [presenterId], references: [id], onDelete: Cascade)
+
+  @@index([presenterId])
+  @@index([aiAgentId])
+  @@index([startTime])
+}
+
+model Attendee {
+  id         String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email      String         @unique
+  name       String         @db.VarChar(100)
+  callStatus CallStatusEnum @default(PENDING)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  Attendance Attendance[]
+  Webinar    Webinar[]
+
+}
+
+model Attendance {
+  id           String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  webinarId    String           @db.Uuid
+  joinedAt     DateTime         @default(now())
+  leftAt       DateTime?
+  attendedType AttendedTypeEnum
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  attendeeId   String           @db.Uuid
+  userId       String?          @db.Uuid
+  user         Attendee         @relation(fields: [attendeeId], references: [id])
+  webinar      Webinar          @relation(fields: [webinarId], references: [id], onDelete: Cascade)
+
+  @@unique([attendeeId, webinarId])
+  @@index([webinarId])
+  @@index([attendedType])
+}
+
+model AiAgents {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String   @db.VarChar(100)
+  firstMessage String
+  prompt       String
+  model        String   @db.VarChar(50)
+  provider     String   @db.VarChar(50)
+  userId       String   @db.Uuid
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  User         User[]   @relation("AiAgentsToUser")
 }
 
 enum AttendedTypeEnum {
@@ -36,88 +131,4 @@ enum CallStatusEnum {
   PENDING
   InProgress
   COMPLETED
-}
-
-model User {
-  id           String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name         String       @db.VarChar(100)
-  clerkId      String       @unique
-  email        String       @unique
-  profileImage String
-  webinars     Webinar[]    @relation("PresenterWebinars")
-  stripeConnectId String? @db.VarChar(255)
-  lastLoginAt  DateTime?
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  deletedAt    DateTime?
-  subscription Boolean @default(false)
-  stripeCustomerId String? @db.VarChar(255)
-
-  @@index([email])
-  @@index([clerkId])
-}
-
-model Webinar {
-  id            String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title         String            @db.VarChar(255)
-  description   String?           @db.Text
-  startTime     DateTime
-  endTime       DateTime?
-  duration      Int               @default(0) // Duration in minutes
-  webinarStatus WebinarStatusEnum @default(SCHEDULED)
-  presenterId   String            @db.Uuid
-  presenter     User              @relation("PresenterWebinars", fields: [presenterId], references: [id], onDelete: Cascade)
-  attendances   Attendance[]
-  tags          String[]
-  ctaLabel      String?           @db.VarChar(50)
-  ctaType       CtaTypeEnum
-  ctaUrl        String?           @db.VarChar(255)
-  couponCode    String?           @db.VarChar(50)
-  couponEnabled Boolean           @default(false)
-  couponExpiry  DateTime?
-  lockChat      Boolean           @default(false)
-  stripeProductId String?         @db.VarChar(255)
-  aiAgentId     String?           @db.Uuid
-  priceId     String?          @db.VarChar(255)
-  recordingUrl  String?
-  thumbnail     String?
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-  deletedAt     DateTime?
-  Attendee      Attendee?         @relation(fields: [attendeeId], references: [id])
-  attendeeId    String?           @db.Uuid
-
-  @@index([presenterId])
-  @@index([aiAgentId])
-  @@index([startTime])
-}
-
-model Attendee {
-  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email      String       @unique
-  name       String       @db.VarChar(100)
-  callStatus CallStatusEnum @default(PENDING)
-  Attendance Attendance[]
-  Webinar    Webinar[]
-
-  createdAt  DateTime     @default(now()) 
-  updatedAt  DateTime     @updatedAt
-}
-
-model Attendance {
-  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  webinarId       String           @db.Uuid
-  joinedAt        DateTime         @default(now())
-  leftAt          DateTime?
-  user            Attendee         @relation(fields: [attendeeId], references: [id])
-  webinar         Webinar          @relation(fields: [webinarId], references: [id], onDelete: Cascade)
-  attendedType    AttendedTypeEnum
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  attendeeId      String           @db.Uuid
-  userId          String?          @db.Uuid
-
-  @@unique([attendeeId, webinarId]) // ✅ This enforces 1 attendee per webinar
-  @@index([webinarId])
-  @@index([attendedType])
 }
