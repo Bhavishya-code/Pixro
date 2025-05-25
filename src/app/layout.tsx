@@ -13,7 +13,7 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   title: "Pixro-Webinar Platform",
-  description: "Pixro is SAAS webinar platform with AI sales agents",
+  description: "Pixro is webinar platform with AI sales agents",
 };
 
 export default function RootLayout({

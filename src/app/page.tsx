@@ -1,5 +1,5 @@
 'use client'
-import { Waitlist } from '@clerk/nextjs'
+// import { Waitlist } from '@clerk/nextjs'
 import Link from 'next/link'
 
 import { motion } from 'framer-motion'
@@ -8,6 +8,9 @@ import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Pacifico } from 'next/font/google'
+import { Button } from '@/components/ui/button'
+import { FcGoogle } from 'react-icons/fc'
+
 
 const pacifico = Pacifico({
   subsets: ['latin'],
@@ -206,8 +209,12 @@ export default function HeroGeometric() {
               Crafting exceptional digital experiences through innovative design
               and cutting-edge technology.
             </p>
-            <div className="flex items-center justify-center flex-col">
-              <Waitlist signInUrl="/sign-in" />
+            <div className="flex items-center justify-center flex-col ">
+              {/* <Waitlist signInUrl="/sign-in" /> */}
+              <Button   className="w-100 relative ">
+                <Link href="/sign-in"> Sign In</Link>
+              </Button>
+
             </div>
           </motion.div>
 
@@ -221,20 +228,9 @@ export default function HeroGeometric() {
             }}
           >
             <p className="text-muted-foreground/50">
-              This codebase is the property of Web Prodigies LLC and is intended
-              solely for customers who have legally obtained a copy of this
-              codebase. Unauthorized reproduction, distribution, or disclosure
-              of any part of this document is strictly prohibited. Web Prodigies
-              LLC. All rights reserved.
+              A SaaS webinar platform with an AI sales agent lets businesses host live or automated webinars while engaging attendees in real time. The AI agent answers questions, qualifies leads, and provides personalized follow-ups. This boosts conversion rates and automates the sales process efficiently.
             </p>
-            <Link href="https://webprodigies.com/store/collections/github-codebase">
-              <Badge
-                variant="outline"
-                className="mt-4 text-lg text-primary"
-              >
-                🔥Purchase the codebase by clicking here
-              </Badge>
-            </Link>
+            
           </motion.div>
         </div>
       </div>
