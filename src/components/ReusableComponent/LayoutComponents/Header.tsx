@@ -6,9 +6,7 @@ import CreateWebinarButton from '../CreateWebinar'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 import { AiAgents, User } from '@prisma/client'
-import SubscriptionModal from '../SubscriptionModal'
-import { StripeElements } from '../Stripe/Element'
-import Stripe from 'stripe'
+import { Stripe } from 'stripe'
 
 type Props = {
   assistants: AiAgents[] | []
@@ -19,12 +17,13 @@ type Props = {
 const Header = ({ assistants, user, stripeProducts }: Props) => {
   const pathname = usePathname()
   const router = useRouter()
+
   return (
     <div className="w-full p-4 sticky top-5 z-10 flex justify-between items-center flex-wrap gap-4 border border-border/40 backdrop-blur-2xl rounded-full">
       {pathname?.includes('pipeline') ? (
         <Button
           className="bg-primary/10 border border-border rounded-xl"
-          variant={'outline'}
+          variant="outline"
           onClick={() => router.push('/webinars')}
         >
           <ArrowLeft /> Back to Webinars
@@ -39,16 +38,10 @@ const Header = ({ assistants, user, stripeProducts }: Props) => {
         <PurpleIcon>
           <LightningIcon />
         </PurpleIcon>
-        {user?.subscription ? (
-          <CreateWebinarButton
-            assistants={assistants}
-            stripeProducts={stripeProducts}
-          />
-        ) : (
-          <StripeElements>
-            <SubscriptionModal user={user} />
-          </StripeElements>
-        )}
+        <CreateWebinarButton
+          assistants={assistants}
+          stripeProducts={stripeProducts}
+        />
       </div>
     </div>
   )

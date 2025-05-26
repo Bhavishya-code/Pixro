@@ -1,6 +1,5 @@
 "use client";
-import { onGetStripeClientSecret } from "@/action/stripe";
-import { Button } from "@/components/ui/button";
+import { PlusIcon } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -10,12 +9,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { User } from "@prisma/client";
-import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
-import { Loader2, PlusIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
+import { User } from "@prisma/client";
 
 type Props = {
   user: User;
@@ -23,44 +21,20 @@ type Props = {
 
 const SubscriptionModal = ({ user }: Props) => {
   const router = useRouter();
-  const stripe = useStripe();
-  const elements = useElements();
   const [loading, setLoading] = useState(false);
 
   const handleConfirm = async () => {
-    try { 
+    try {
       setLoading(true);
-    
-      if (!stripe || !elements) {
-        return toast.error("Stripe not initialized");
-      }
-      const intent = await onGetStripeClientSecret(user.email, user.id);
-      // console.log("INTENT", intent);
 
-      if (!intent?.secret) {
-        throw new Error("Failed to initialize payment");
-      }
+      // Replace this with your actual webinar creation logic
+      console.log("Webinar creation confirmed for:", user.email);
 
-      const cardElement = elements.getElement(CardElement);
-      if (!cardElement) {
-        throw new Error("Card details not found");
-      }
-      const { error, paymentIntent } = await stripe.confirmCardPayment(
-        intent.secret,
-        {
-          payment_method: { card: cardElement },
-        }
-      );
-      if (error) {
-        throw new Error(error?.message || "Payment failed");
-      }
-
-      console.log("Payment successful", paymentIntent);
-
+      // Optionally navigate or refresh
       router.refresh();
     } catch (e) {
-      console.log("SUBSCRIPTION-->", e);
-      toast.error("Failed to update subscription");
+      console.log("WEBINAR CREATION ERROR -->", e);
+      toast.error("Failed to create webinar");
     } finally {
       setLoading(false);
     }
@@ -76,37 +50,30 @@ const SubscriptionModal = ({ user }: Props) => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Spotlight Subscription</DialogTitle>
-
+          <DialogTitle>Create Webinar</DialogTitle>
         </DialogHeader>
-        
-        <CardElement
-            options={{
-              style: {
-                base: {
-                  fontSize: "16px",
-                  color: "#B4B0AE",
-                  "::placeholder": {
-                    color: "#B4B0AE",
-                  },
-                },
-              },
-            }}
-            className="border-[1px] outline-none rounded-lg p-3 w-full"
-          />
+
+        {/* Optional: Add your actual form inputs here */}
+        <div className="text-sm text-muted-foreground">
+          Add your webinar creation fields or redirect logic here.
+        </div>
+
         <DialogFooter className="gap-4 items-center">
           <DialogClose className="w-full sm:w-auto border border-border rounded-md px-3 py-2" disabled={loading}>
             Cancel
           </DialogClose>
           <Button
-            type="submit"
+            type="button"
             className="w-full sm:w-auto"
             onClick={handleConfirm}
             disabled={loading}
           >
             {loading ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <svg className="w-4 h-4 mr-2 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="4" />
+                </svg>
                 Loading...
               </>
             ) : (
