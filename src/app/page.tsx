@@ -209,7 +209,7 @@ export default function HeroGeometric() {
               Crafting exceptional digital experiences through innovative design
               and cutting-edge technology.
             </p>
-            <div className="flex items-center justify-center flex-col ">
+            <div className="flex items-center justify-center flex-col">
               {/* <Waitlist signInUrl="/sign-in" /> */}
               <Button   className="w-100 relative ">
                 <Link href="/sign-in"> Sign In</Link>
