@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
    
-    "postinstall": "prisma generate",
+    "postinstall": "npm install --legacy-peer-deps",
     "vercel-build": "prisma generate && prisma migrate deploy && next build"
   
 
