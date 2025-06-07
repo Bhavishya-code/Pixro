@@ -6,10 +6,10 @@ import { motion } from 'framer-motion'
 
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
+
 import { Pacifico } from 'next/font/google'
 import { Button } from '@/components/ui/button'
-import { FcGoogle } from 'react-icons/fc'
+
 
 
 const pacifico = Pacifico({

@@ -14,7 +14,7 @@ type Props = {
   stripeProducts: Stripe.Product[] | []
 }
 
-const Header = ({ assistants, user, stripeProducts }: Props) => {
+const Header = ({ assistants, stripeProducts }: Props) => {
   const pathname = usePathname()
   const router = useRouter()
 
