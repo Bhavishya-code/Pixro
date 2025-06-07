@@ -1,7 +1,7 @@
 
 
 import { changeAttendanceType } from "@/action/attendance";
-import { updateSubscription } from "@/action/stripe";
+ 
 import { stripe } from "@/lib/stripe";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
       await changeAttendanceType(event?.metadata?.attendeeId, event?.metadata?.webinarId, "CONVERTED"); 
       case "customer.subscription.created":
       case "customer.subscription.updated":
-        await updateSubscription(event);
+       
         console.log("CREATED FROM WEBHOOK 💳", event);
         return NextResponse.json({ received: true }, { status: 200 });
       default:
